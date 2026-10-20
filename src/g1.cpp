@@ -64,6 +64,18 @@ G1RobotModule::G1RobotModule(const std::string & variant)
     _ref_joint_order.push_back("right_wrist_yaw_joint");
   }
 
+  // Match the uniform armature currently used by the mc_mujoco G1 model.
+  //
+  // gearRatio = 1 means:
+  // RBDyn equivalent armature = rotorInertia * gearRatio^2 = 0.01
+  for(const auto & jointName : _ref_joint_order)
+  {
+    const int jointIndex = mb.jointIndexByName(jointName);
+
+    mb.setJointRotorInertia(jointIndex, 0.01);
+    mb.setJointGearRatio(jointIndex, 1.0);
+  }
+
   using namespace mc_rtc::constants;
   _stance["left_hip_yaw_joint"] = {0.0};
   _stance["left_hip_roll_joint"] = {0.0};
